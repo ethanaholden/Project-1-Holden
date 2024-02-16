@@ -50,7 +50,9 @@ plt.show()
 #Accurately Scaled Spectrogram
 freq = freq[::-1]  # Invert frequency data
 norm = matplotlib.colors.PowerNorm(gamma=0.5)
-plt.imshow(freq, aspect='auto', cmap=plt.cm.get_cmap('inferno', 256), extent=(0, len(data) / sr, 0, 8000), norm=norm)
+#get_cmap was depreciated
+#plt.imshow(freq, aspect='auto', cmap=plt.cm.get_cmap('inferno', 256), extent=(0, len(data) / sr, 0, 8000), norm=norm)
+plt.imshow(freq, aspect='auto', cmap=matplotlib.colormaps['inferno'], extent=(0, len(data) / sr, 0, 8000), norm=norm)
 plt.colorbar()
 plt.xlabel('Time')
 plt.ylabel('Frequency (Hz)')
