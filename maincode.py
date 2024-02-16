@@ -17,12 +17,16 @@ from audio2numpy import open_audio
 import pydub
 import soundfile as sf
 
+#Record
 duration = 5
 sr = 44100
 recording = sd.rec(int(duration*sr), samplerate=sr, channels=2)
 print("recording...............")
 sd.wait()
 write("sound.wav",sr,recording)
+
+
+#Time Domain Plot
 #print(sd.query_devices())
 data, sampling_rate = librosa.load("sound.wav", sr = 44100)
 print(data.shape)
@@ -33,6 +37,8 @@ librosa.display.waveshow(data, sr=sr, color="blue")
 plt.ylabel('Amplitude')
 plt.xlabel('Time')
 plt.show()
+
+#Librosa Spectrogram
 freq = librosa.amplitude_to_db(np.abs(librosa.stft(data)), ref=np.max)
 print(freq.shape)
 fig, ax = plt.subplots()
@@ -40,6 +46,8 @@ img = librosa.display.specshow(freq, x_axis='time', y_axis='linear', ax=ax, sr=s
 ax.set(title='Spectrogram of Recording.')
 fig.colorbar(img, ax=ax)
 plt.show()
+
+#Accurately Scaled Spectrogram
 freq = freq[::-1]  # Invert frequency data
 norm = matplotlib.colors.PowerNorm(gamma=0.5)
 plt.imshow(freq, aspect='auto', cmap=plt.cm.get_cmap('inferno', 256), extent=(0, len(data) / sr, 0, 8000), norm=norm)
@@ -51,7 +59,7 @@ plt.show()
 
 print('delay?')
 
-def audio_delay(path, d, atten):
+def audio_delay(path, d, atten):  #Delays and attenuates
     left = x[0]
     #print(left)
     if d != 0:
@@ -66,11 +74,12 @@ def audio_delay(path, d, atten):
 
 if input() == 'yes':
     x, sr = librosa.load('sound.wav', mono=False)
-    xside = np.rot90(x,3)
+    xside = np.rot90(x,3)  #rotation is necessary for dealing with the np arrays
     
-    outpath = r"C:\Users\joshh\AppData\Local\Programs\Python\Python311\soundout.wav"
+    outpath = r"C:\Users\joshh\AppData\Local\Programs\Python\Python311\soundout.wav"  #Put your own file path here, path is where to find the recorded file and outpath is where to put the new ones
     path = r"C:\Users\joshh\AppData\Local\Programs\Python\Python311\sound.wav"
 
+#make all the arrays for each delay/attenuation combo
     #delayed_audio0 = audio_delay(path, 0, 0)
     delayed_audio480 = audio_delay(path, 21, 0)
     delayed_audio1 = audio_delay(path, 44, 0)
@@ -86,7 +95,7 @@ if input() == 'yes':
 
     sr = 44100
     testsr = 22050
-
+#write all the arrays that were just made.  for some reason they come out twice as fast so halving the sample rate works
     sf.write('teamholden-stereosoundfile-0ms.wav', xside, testsr, subtype='PCM_24')
     sf.write('teamholden-stereosoundfile-480us.wav', np.rot90(delayed_audio480,3), testsr, subtype='PCM_24')
     sf.write('teamholden-stereosoundfile-1ms.wav', np.rot90(delayed_audio1,3), testsr, subtype='PCM_24')
